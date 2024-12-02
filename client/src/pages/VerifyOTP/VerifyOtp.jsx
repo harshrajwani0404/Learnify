@@ -32,7 +32,7 @@ const VerifyOtp = () => {
 
     try {
       const response = await axios.post(
-        "https://learne5.onrender.com/auth/verify-email",
+        "https://learne5-qbp6.onrender.com/auth/verify-email",
         {
           verificationToken: otp,
         }

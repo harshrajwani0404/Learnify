@@ -29,7 +29,7 @@ router.get(
             return res.send(`
                 <script>
                     alert("User not found. Please sign up first.");
-                    window.opener.postMessage({ error: "User not found" }, "https://learnify-sk7g.onrender.com/login");
+                    window.opener.postMessage({ error: "User not found" }, "https://learnify-jlfu.onrender.com/login");
                     window.close();
                 </script>
             `);
@@ -47,7 +47,7 @@ router.get(
                 window.opener.postMessage({
                     user: ${JSON.stringify(user)},
                     token: "${token}"
-                }, "https://learnify-sk7g.onrender.com");
+                }, "https://learnify-jlfu.onrender.com");
                 window.close();
             </script>
         `);

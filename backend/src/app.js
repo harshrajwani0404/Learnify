@@ -50,7 +50,7 @@ app.use(express.static("public"));
 
 // CORS configuration
 app.use(cors({
-  origin: "https://learnify-sk7g.onrender.com",
+  origin: "https://learnify-jlfu.onrender.com",
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
   credentials: true

@@ -16,7 +16,7 @@ function Login() {
 
     try {
       const response = await axios.post(
-        "https://learne5.onrender.com/auth/login",
+        "https://learne5-qbp6.onrender.com/auth/login",
         { email, password },
         { withCredentials: true } // Ensure cookies are included
       );
@@ -60,14 +60,14 @@ function Login() {
     try {
       // Open the Google OAuth popup
       const authWindow = window.open(
-        "https://learne5.onrender.com/auth/google/callback",
+        "https://learne5-qbp6.onrender.com/auth/google/callback",
         "_blank",
         "width=500,height=600"
       );
 
       // Add a message event listener to handle messages from the popup
       const messageListener = (event) => {
-        if (event.origin !== "https://learne5.onrender.com") {
+        if (event.origin !== "https://learne5-qbp6.onrender.com") {
           console.error(
             "Received message from an unknown origin:",
             event.origin

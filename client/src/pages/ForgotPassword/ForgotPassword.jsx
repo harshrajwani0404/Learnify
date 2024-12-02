@@ -13,7 +13,7 @@ const ForgotPassword = () => {
     setMessage(''); // Clear previous messages
 
     try {
-      const response = await axios.post("https://learne5.onrender.com/auth/forgot-password", {
+      const response = await axios.post("https://learne5-qbp6.onrender.com/auth/forgot-password", {
         email: email,
       });
 

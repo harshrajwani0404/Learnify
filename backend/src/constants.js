@@ -1,6 +1,6 @@
 // import JWT_SECRET_KEY from './index.js';
 export const DB_NAME = "OnlineLearn"
-export const URL = "https://learne5.onrender.com/api/v1/";
+export const URL = "https://learne5-qbp6.onrender.com/api/v1/";
 // const JWT_KEY = JWT_SECRET_KEY;
 // export default JWT_KEY;
 export const EMAIL_USER="learnif314@gmail.com"

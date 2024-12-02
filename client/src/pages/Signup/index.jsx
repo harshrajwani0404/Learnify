@@ -65,7 +65,7 @@ function Signup() {
         }
 
         try {
-            const response = await axios.post("https://learne5.onrender.com/auth/signup", {
+            const response = await axios.post("https://learne5-qbp6.onrender.com/auth/signup", {
                 email,
                 username,
                 password,
