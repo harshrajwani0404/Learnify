@@ -81,6 +81,7 @@ function Login() {
           // Store the token and user in localStorage
           localStorage.setItem("user", JSON.stringify(user));
           localStorage.setItem("token", token);
+          localStorage.setItem("isloggedin", true);
 
           // Redirect to the home page
           window.location.href = "/home";
