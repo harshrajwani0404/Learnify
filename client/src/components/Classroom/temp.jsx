@@ -11,22 +11,30 @@ const ClassSection = () => {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [errors, setErrors] = useState({ title: false, content: false }); // Error state for validation
   const subject = useParams().subject;
   const [updateTrigger, setUpdateTrigger] = useState(0);
+  
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // Validate fields
     const newErrors = {
       title: !title.trim(),
       content: !content.trim(),
     };
     setErrors(newErrors);
-
-    if (newErrors.title || newErrors.content) return; // Stop submission if errors exist
-
+  
+    // Focus on the first invalid input
+    if (newErrors.title) {
+      document.getElementById("title").focus();
+      return;
+    }
+    if (newErrors.content) {
+      document.getElementById("content").focus();
+      return;
+    }
+  
     try {
       const response = await fetch(`${URL}/announcement/`, {
         method: "POST",
@@ -36,12 +44,14 @@ const ClassSection = () => {
         },
         body: JSON.stringify({ title, content, subject, user }),
       });
-
+  
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message);
       }
-
+  
+      // Success message and state reset
+      alert("Announcement created successfully!");
       setOpen(false);
       setTitle("");
       setContent("");
@@ -51,43 +61,39 @@ const ClassSection = () => {
       alert("Error creating announcement: " + error.message);
     }
   };
+  
+  
 
-  // Input fields configuration
-  const fields = [
-    {
-      id: "title",
-      label: "Title",
-      type: "text",
-      value: title,
-      onChange: (e) => setTitle(e.target.value),
-      error: errors.title,
-      errorMessage: "Title is required.",
-    },
-    {
-      id: "content",
-      label: "Content",
-      type: "textarea",
-      value: content,
-      onChange: (e) => setContent(e.target.value),
-      error: errors.content,
-      errorMessage: "Content is required.",
-    },
-  ];
 
-  if (isLoading)
-    return (
-      <div className="flex justify-center items-center h-screen">
-        Loading...
-      </div>
-    );
+// Input fields configuration with validation messages
+const fields = [
+  {
+    id: "title",
+    label: "Title",
+    type: "text",
+    value: title,
+    onChange: (e) => setTitle(e.target.value),
+    error: errors.title,
+    errorMessage: "Title is required.",
+  },
+  {
+    id: "content",
+    label: "Content",
+    type: "textarea",
+    value: content,
+    onChange: (e) => setContent(e.target.value),
+    error: errors.content,
+    errorMessage: "Content is required.",
+  },
+];
 
-  // Section animations
+  if (isLoading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
+
   const sectionVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
   };
 
-  // Section items
   const sectionItems = [
     { name: "Lessons", icon: BookOpen, description: "Access course lectures" },
     { name: "Assignments", icon: ClipboardList, description: "View and submit assignments" },
@@ -96,7 +102,7 @@ const ClassSection = () => {
 
   return (
     <div className="container mx-auto px-4 py-12 bg-gray-100 min-h-screen">
-      <motion.h1
+      <motion.h1 
         className="text-4xl font-bold text-center mb-12 text-gray-800"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -115,7 +121,7 @@ const ClassSection = () => {
             transition={{ delay: index * 0.1 }}
           >
             <Link to={`/home/${subject}/${item.name.toLowerCase()}`} className="block w-full h-full">
-              <motion.div
+              <motion.div 
                 className="bg-white text-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-center group"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -137,9 +143,7 @@ const ClassSection = () => {
         className="bg-white rounded-xl shadow-lg overflow-hidden"
       >
         <div className="bg-blue-600 p-4">
-          <h2 className="text-2xl font-bold text-white text-center">
-            Announcements
-          </h2>
+          <h2 className="text-2xl font-bold text-white text-center">Announcements</h2>
         </div>
         <div className="p-6">
           <AnnouncementSection subject={subject} updateTrigger={updateTrigger} />
@@ -169,7 +173,7 @@ const ClassSection = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6"
+            className="bg-white rounded-xl shadow-2xl w-full max-w-md"
           >
             <Form
               title="Create Announcement"
