@@ -17,6 +17,7 @@ const AnnouncementSection = ({ subject, updateTrigger }) => {
   const [error, setError] = useState(null);
   const [replyContent, setReplyContent] = useState("");
   const [activeReplyId, setActiveReplyId] = useState(null);
+  const [replyError, setReplyError] = useState(false); 
   const { user } = useAuth();
 
   const handleReply = async (announcementId) => {
@@ -47,11 +48,16 @@ const AnnouncementSection = ({ subject, updateTrigger }) => {
 
         setReplyContent("");
         setActiveReplyId(null);
+        setReplyError(false);
         fetchData();
         window.location.reload();
       } catch (error) {
         console.error("Error posting reply:", error);
       }
+    }
+    else{
+      setReplyError(true); // Set validation error
+      return;
     }
   };
 
@@ -146,12 +152,22 @@ const AnnouncementSection = ({ subject, updateTrigger }) => {
                 {activeReplyId === acemt._id ? (
                   <div className="space-y-3">
                     <textarea
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
+                      className={`w-full p-3 border rounded-lg focus:ring-2 transition-all duration-300 ${
+                        replyError
+                          ? "border-red-500 focus:ring-red-500"
+                          : "border-gray-300 focus:ring-purple-500"
+                      }`}
                       value={replyContent}
-                      onChange={(e) => setReplyContent(e.target.value)}
+                      onChange={(e) => {
+                        setReplyContent(e.target.value);
+                        if (e.target.value.trim()) setReplyError(false); // Clear error when input is valid
+                      }}
                       placeholder="Write your reply..."
                       rows="3"
                     />
+                    {replyError && (
+                      <p className="text-red-500 text-sm">Reply content is required.</p>
+                    )}
                     <div className="flex justify-end space-x-3">
                       <button
                         className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition duration-300 ease-in-out flex items-center"
@@ -162,7 +178,11 @@ const AnnouncementSection = ({ subject, updateTrigger }) => {
                       </button>
                       <button
                         className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-300 ease-in-out flex items-center"
-                        onClick={() => setActiveReplyId(null)}
+                        onClick={() => {
+                          setReplyContent("");
+                          setReplyError(false);
+                          setActiveReplyId(null);
+                        }}
                       >
                         <X size={16} className="mr-2" />
                         Cancel

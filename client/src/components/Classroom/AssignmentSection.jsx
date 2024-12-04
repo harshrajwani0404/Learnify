@@ -25,6 +25,7 @@ const AssignmentSection = ({ subject }) => {
         }
         const data = await response.json();
         setAssignments(data.data);
+        window.location.reload();
       } catch (error) {
         console.error("Error fetching assignments:", error);
       }
