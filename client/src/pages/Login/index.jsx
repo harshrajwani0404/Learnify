@@ -36,6 +36,7 @@ function Login() {
         alert("Login successful!");
         window.location.reload("/home");
         navigate("/home"); // Redirect to home
+        window.history.replaceState(null, null, window.location.href);
       } else {
         throw new Error("Invalid login response.");
       }
@@ -86,6 +87,7 @@ function Login() {
           // Redirect to the home page
           window.location.reload("/home");
           navigate("/home"); // Redirect to home
+          window.history.replaceState(null, null, window.location.href);
         } else {
           alert("Authentication failed. Please try again.");
         }
