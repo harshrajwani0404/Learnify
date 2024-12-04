@@ -15,6 +15,7 @@ const AssignmentView = ({ subject }) => {
       const data = await response.json();
       setStudents(data.students);
       setAssignments(data.assignments);
+      window.location.reload();
     } catch (error) {
       console.log(error.message);
     }

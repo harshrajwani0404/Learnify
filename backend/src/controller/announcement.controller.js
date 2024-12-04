@@ -76,38 +76,38 @@ const createAnnouncement = async (req, res) => {
 //   return announcement;
 // }
 
-// const updateAnnouncement = async (req, res) => {
-//   try {
-//     const anid = req.params.id;
-//     const { content, user } = req.body;
-//     // console.log(anid, content, user);
-//     const announcement = await Announcement.findByIdAndUpdate(
-//       anid,
-//       {
-//         $push: {
-//           replies: {
-//             user: user,
-//             content: content
-//           }
-//         }
-//       },
-//       { new: true }
-//     );
+const updateAnnouncement = async (req, res) => {
+  try {
+    const anid = req.params.id;
+    const { content, user } = req.body;
+    // console.log(anid, content, user);
+    const announcement = await Announcement.findByIdAndUpdate(
+      anid,
+      {
+        $push: {
+          replies: {
+            user: user,
+            content: content
+          }
+        }
+      },
+      { new: true }
+    );
 
-//     if (!announcement) {
-//       return res.status(404).json({ message: "Announcement not found" });
-//     }
+    if (!announcement) {
+      return res.status(404).json({ message: "Announcement not found" });
+    }
 
-//     res.status(200).json(announcement);
-//   } catch (error) {
-//     console.error("Error updating announcement:", error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// };
+    res.status(200).json(announcement);
+  } catch (error) {
+    console.error("Error updating announcement:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 export {
   getAnnouncement,
-  //updateAnnouncement,
+  updateAnnouncement,
   createAnnouncement,
   //deleteAnnouncement,
 };

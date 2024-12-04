@@ -4,6 +4,7 @@ import { User } from '../models/user.model.js';
 import { Lesson } from '../models/lesson.model.js';
 import { Material } from '../models/material.model.js';
 import { Resource } from '../models/resource.model.js';
+import {Assignment } from '../models/assignment.model.js';
 import { Announcement } from '../models/announcement.model.js';
 
 // const usedCodes = new Set();
@@ -127,6 +128,8 @@ const deleteClass = async (req, res) => {
 
     await Material.deleteMany({ class: classId }, { session });
 
+    await Assignment.deleteMany({class : classId}, {session});
+    
     const announcements = await Announcement.find({ _id: { $in: deletedClass.announcements } }).session(session);
     for (const announcement of announcements) {
       await Announcement.findByIdAndDelete(announcement._id, { session });
