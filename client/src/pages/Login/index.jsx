@@ -36,11 +36,10 @@ function Login() {
         alert("Login successful!");
         window.location.reload("/home");
         navigate("/home"); // Redirect to home
-        window.onpopstate = function (event) {
-          if (event) {
-            window.location.href = '/home'; // Redirect to logged-in page
-          }
-        };
+        window.history.pushState(null, null, window.location.href);
+        window.addEventListener('popstate', function () {
+              window.history.pushState(null, null, window.location.href);
+        });
       } else {
         throw new Error("Invalid login response.");
       }
@@ -91,11 +90,10 @@ function Login() {
           // Redirect to the home page
           window.location.reload("/home");
           navigate("/home"); // Redirect to home
-          window.onpopstate = function (event) {
-            if (event) {
-              window.location.href = '/home'; // Redirect to logged-in page
-            }
-          };
+          window.history.pushState(null, null, window.location.href);
+          window.addEventListener('popstate', function () {
+                window.history.pushState(null, null, window.location.href);
+          });
         } else {
           alert("Authentication failed. Please try again.");
         }
