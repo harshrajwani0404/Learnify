@@ -36,7 +36,11 @@ function Login() {
         alert("Login successful!");
         window.location.reload("/home");
         navigate("/home"); // Redirect to home
-        window.history.replaceState(null, null, window.location.href);
+        window.onpopstate = function (event) {
+          if (event) {
+            window.location.href = '/home'; // Redirect to logged-in page
+          }
+        };
       } else {
         throw new Error("Invalid login response.");
       }
@@ -87,7 +91,11 @@ function Login() {
           // Redirect to the home page
           window.location.reload("/home");
           navigate("/home"); // Redirect to home
-          window.history.replaceState(null, null, window.location.href);
+          window.onpopstate = function (event) {
+            if (event) {
+              window.location.href = '/home'; // Redirect to logged-in page
+            }
+          };
         } else {
           alert("Authentication failed. Please try again.");
         }
