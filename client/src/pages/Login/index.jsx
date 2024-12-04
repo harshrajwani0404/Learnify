@@ -84,7 +84,8 @@ function Login() {
           localStorage.setItem("isloggedin", true);
 
           // Redirect to the home page
-          window.location.href = "/home";
+          window.location.reload("/home");
+          navigate("/home"); // Redirect to home
         } else {
           alert("Authentication failed. Please try again.");
         }
