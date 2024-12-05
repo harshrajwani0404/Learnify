@@ -3,7 +3,7 @@ import { getAssignments, insertAssignment,submitAssignment, submitWorkDetails } 
 import authenticateToken from '../middlewares/auth.middleware.js';
 
 const router = Router();
-router.use(authenticateToken)
+// router.use(authenticateToken)
 
 router.route('/:subject').get(getAssignments);
 router.route('/insert').post(insertAssignment);
