@@ -40,17 +40,17 @@ import { Class } from "../models/class.model.js";
 //     }
 // }
 
-// const deleteUser = async (req, res) => {
-//     try {
-//         const deletedUser = await User.findByIdAndDelete(req.params.id)
-//         res.status(200).json(deletedUser)
-//     } catch (error) {
-//         res.status(400).json({
-//             success: false,
-//             message: error.message
-//         })
-//     }
-// }
+const deleteUser = async (req, res) => {
+    try {
+        const deletedUser = await User.findByIdAndDelete(req.params.id)
+        res.status(200).json(deletedUser)
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
 
 // const updateUser = async (req, res) => {
 //     try {
@@ -153,7 +153,7 @@ const getStudents = async (req, res) => {
 
 export {
     //insertUser,
-    //deleteUser,
+    deleteUser,
     //updateUser,
     getUser,
     validateUser,
