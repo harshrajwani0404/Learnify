@@ -153,7 +153,7 @@ const getStudents = async (req, res) => {
 
 export {
     //insertUser,
-    deleteUser,
+    //deleteUser,
     //updateUser,
     getUser,
     validateUser,
