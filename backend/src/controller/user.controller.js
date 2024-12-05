@@ -2,43 +2,43 @@ import { User } from "../models/user.model.js";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { Class } from "../models/class.model.js";
-import sendEmail from "../utils/emailService.js";
+//import sendEmail from "../utils/emailService.js";
 
-const insertUser = async (req, res) => {
+// const insertUser = async (req, res) => {
 
-    const hashedPassword = await bcrypt.hash(req.body.password, 8)
-        .then(function (hash) {
-            return hash;
-        });
-    const user = new User({
-        username: req.body.username,
-        email: req.body.email,
-        password: hashedPassword.toString(),
-        gender: req.body.gender,
-        type: req.body.type,
-        classCodes: [],
-    })
-    try {
-        const newUser = await user.save();
-        const classes = await Class.find({}, 'code subject');
+//     const hashedPassword = await bcrypt.hash(req.body.password, 8)
+//         .then(function (hash) {
+//             return hash;
+//         });
+//     const user = new User({
+//         username: req.body.username,
+//         email: req.body.email,
+//         password: hashedPassword.toString(),
+//         gender: req.body.gender,
+//         type: req.body.type,
+//         classCodes: [],
+//     })
+//     try {
+//         const newUser = await user.save();
+//         const classes = await Class.find({}, 'code subject');
 
-        let classDetails = "<h2>Available Classes</h2><ul>";
-        classes.forEach(cls => {
-            classDetails += `<li>Code: <strong>${cls.code}</strong> - Subject:<strong> ${cls.subject}</strong></li>`;
-        });
-        classDetails += "</ul>";
+//         let classDetails = "<h2>Available Classes</h2><ul>";
+//         classes.forEach(cls => {
+//             classDetails += `<li>Code: <strong>${cls.code}</strong> - Subject:<strong> ${cls.subject}</strong></li>`;
+//         });
+//         classDetails += "</ul>";
 
-        await sendEmail(newUser.email, "Information Regarding Joining the Classes", "Please find the details of the available classes below.", classDetails);
+//         await sendEmail(newUser.email, "Information Regarding Joining the Classes", "Please find the details of the available classes below.", classDetails);
 
-        res.status(201).json(newUser);
-    } catch (error) {
-        console.error(error)
-        res.status(400).json({
-            success: false,
-            message: error
-        })
-    }
-}
+//         res.status(201).json(newUser);
+//     } catch (error) {
+//         console.error(error)
+//         res.status(400).json({
+//             success: false,
+//             message: error
+//         })
+//     }
+// }
 
 const deleteUser = async (req, res) => {
     try {
@@ -152,7 +152,7 @@ const getStudents = async (req, res) => {
 };
 
 export {
-    insertUser,
+    //insertUser,
     deleteUser,
     //updateUser,
     getUser,
