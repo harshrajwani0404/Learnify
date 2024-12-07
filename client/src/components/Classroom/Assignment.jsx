@@ -11,13 +11,18 @@ const Assignment = ({ assignment }) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const pdfViewerRef = useRef(null);
   const iframeRef = useRef(null);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [submittedAssignments, setSubmittedAssignments] = useState({}); // Tracks submission per assignment
 
   useEffect(() => {
-    setIsSubmitted(
-      assignment.submission.some((sub) => sub.student === user._id)
+    // Determine if the current assignment is already submitted by the user
+    const hasSubmitted = assignment.submission.some(
+      (sub) => sub.student === user._id
     );
+    setSubmittedAssignments((prev) => ({
+      ...prev,
+      [assignment._id]: hasSubmitted,
+    }));
 
     const handleFullscreenChange = () => {
       setIsFullScreen(!!document.fullscreenElement);
@@ -31,14 +36,14 @@ const Assignment = ({ assignment }) => {
     document.addEventListener("fullscreenchange", handleFullscreenChange);
     return () =>
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
-  }, [assignment.submission, user._id]);
+  }, [assignment.submission, user._id, assignment._id]);
 
   const handleFileChange = async (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setIsUploading(true);
       try {
-        const storageRef = ref(storage, "/documents/" + selectedFile.name);
+        const storageRef = ref(storage, `/documents/${assignment._id}-${selectedFile.name}`);
         const snapshot = await uploadBytes(storageRef, selectedFile);
         const downloadUrl = await getDownloadURL(snapshot.ref);
         setFile(downloadUrl);
@@ -79,7 +84,10 @@ const Assignment = ({ assignment }) => {
       }
 
       const result = await response.json();
-      setIsSubmitted(true);
+      setSubmittedAssignments((prev) => ({
+        ...prev,
+        [assignment._id]: true,
+      }));
       setFile(null);
       console.log("Assignment submitted successfully:", result);
     } catch (error) {
@@ -112,7 +120,7 @@ const Assignment = ({ assignment }) => {
             <Calendar className="mr-2" />
             <span>Due: {new Date(assignment.dueDate).toLocaleDateString()}</span>
           </div>
-          {isSubmitted && (
+          {submittedAssignments[assignment._id] && (
             <div className="flex items-center text-lg text-green-600 bg-green-100 p-3 rounded-lg">
               <CheckCircle className="mr-2" />
               Assignment submitted successfully!
@@ -122,13 +130,13 @@ const Assignment = ({ assignment }) => {
             <div className="relative">
               <input
                 type="file"
-                id="file"
+                id={`file-${assignment._id}`}
                 className="hidden"
                 onChange={handleFileChange}
                 required
               />
               <label
-                htmlFor="file"
+                htmlFor={`file-${assignment._id}`}
                 className="flex items-center justify-center w-full px-4 py-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
               >
                 <Upload className="mr-2" />
@@ -138,7 +146,9 @@ const Assignment = ({ assignment }) => {
             <button
               type="submit"
               className="w-full bg-gradient-to-r from-indigo-600 to-indigo-800 text-white font-bold py-3 px-6 rounded-lg hover:from-indigo-700 hover:to-indigo-900 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={isSubmitted || isUploading || !file}
+              disabled={
+                submittedAssignments[assignment._id] || isUploading || !file
+              }
             >
               {isUploading ? "Uploading..." : "Submit Assignment"}
             </button>
