@@ -6,24 +6,19 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Calendar, Upload, CheckCircle, Maximize, Minimize } from "lucide-react";
 
 const Assignment = ({ assignment }) => {
-  const [file, setFile] = useState(null);
   const { user } = useAuth();
   const [isFullScreen, setIsFullScreen] = useState(false);
   const pdfViewerRef = useRef(null);
   const iframeRef = useRef(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const [submittedAssignments, setSubmittedAssignments] = useState({}); // Tracks submission per assignment
+  
+  // Per-assignment state
+  const [assignmentState, setAssignmentState] = useState({
+    file: null,
+    isUploading: false,
+    isSubmitted: assignment.submission.some((sub) => sub.student === user._id),
+  });
 
   useEffect(() => {
-    // Determine if the current assignment is already submitted by the user
-    const hasSubmitted = assignment.submission.some(
-      (sub) => sub.student === user._id
-    );
-    setSubmittedAssignments((prev) => ({
-      ...prev,
-      [assignment._id]: hasSubmitted,
-    }));
-
     const handleFullscreenChange = () => {
       setIsFullScreen(!!document.fullscreenElement);
       if (iframeRef.current) {
@@ -36,23 +31,20 @@ const Assignment = ({ assignment }) => {
     document.addEventListener("fullscreenchange", handleFullscreenChange);
     return () =>
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
-  }, [assignment.submission, user._id, assignment._id]);
+  }, []);
 
   const handleFileChange = async (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      setIsUploading(true);
+      setAssignmentState((prevState) => ({ ...prevState, isUploading: true }));
       try {
         const storageRef = ref(storage, `/documents/${assignment._id}-${selectedFile.name}`);
         const snapshot = await uploadBytes(storageRef, selectedFile);
         const downloadUrl = await getDownloadURL(snapshot.ref);
-        setFile(downloadUrl);
-        setIsUploading(false);
-        return true;
+        setAssignmentState((prevState) => ({ ...prevState, file: downloadUrl, isUploading: false }));
       } catch (error) {
         console.error("Error uploading file:", error);
-        setIsUploading(false);
-        return false;
+        setAssignmentState((prevState) => ({ ...prevState, isUploading: false }));
       }
     }
   };
@@ -74,7 +66,7 @@ const Assignment = ({ assignment }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({ user, file, assignmentId: assignment._id }),
+          body: JSON.stringify({ user, file: assignmentState.file, assignmentId: assignment._id }),
         }
       );
 
@@ -83,13 +75,8 @@ const Assignment = ({ assignment }) => {
         throw new Error(errorData.message || "Failed to submit assignment");
       }
 
-      const result = await response.json();
-      setSubmittedAssignments((prev) => ({
-        ...prev,
-        [assignment._id]: true,
-      }));
-      setFile(null);
-      console.log("Assignment submitted successfully:", result);
+      setAssignmentState((prevState) => ({ ...prevState, isSubmitted: true, file: null }));
+      console.log("Assignment submitted successfully.");
     } catch (error) {
       console.error("Error submitting assignment:", error);
       alert(`Error submitting assignment: ${error.message}`);
@@ -120,7 +107,7 @@ const Assignment = ({ assignment }) => {
             <Calendar className="mr-2" />
             <span>Due: {new Date(assignment.dueDate).toLocaleDateString()}</span>
           </div>
-          {submittedAssignments[assignment._id] && (
+          {assignmentState.isSubmitted && (
             <div className="flex items-center text-lg text-green-600 bg-green-100 p-3 rounded-lg">
               <CheckCircle className="mr-2" />
               Assignment submitted successfully!
@@ -140,17 +127,15 @@ const Assignment = ({ assignment }) => {
                 className="flex items-center justify-center w-full px-4 py-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
               >
                 <Upload className="mr-2" />
-                {file ? "File uploaded" : "Upload your file"}
+                {assignmentState.file ? "File uploaded" : "Upload your file"}
               </label>
             </div>
             <button
               type="submit"
               className="w-full bg-gradient-to-r from-indigo-600 to-indigo-800 text-white font-bold py-3 px-6 rounded-lg hover:from-indigo-700 hover:to-indigo-900 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={
-                submittedAssignments[assignment._id] || isUploading || !file
-              }
+              disabled={assignmentState.isSubmitted || assignmentState.isUploading || !assignmentState.file}
             >
-              {isUploading ? "Uploading..." : "Submit Assignment"}
+              {assignmentState.isUploading ? "Uploading..." : "Submit Assignment"}
             </button>
           </form>
         </div>
